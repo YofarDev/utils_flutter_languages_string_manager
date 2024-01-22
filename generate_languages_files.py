@@ -15,7 +15,7 @@ def init_files(codes):
 
 
 def close_files(codes):
-    foot = "\n}"
+    foot = "\n}\n"
     with open(main_file, 'a') as f:
         f.write(foot)
     for code in codes:
@@ -38,17 +38,18 @@ def add_to_language_code(codes, str):
 
 def write_files(df, codes):
     for x in df.itertuples(index=False):
-        if '#' in x.Title:
-            str = "\n/// {} ///\n".format(x.Title.replace('#', ''))
+        if '#' in x.Code:
+            str = "\n/// {} ///\n".format(x.Code.replace('#', ''))
             add_to_languages(str)
             add_to_language_code(codes, str)
         else:
-            str = "String get {};\n".format(x.Title)
+            str = "String get {};\n".format(x.Code)
             add_to_languages(str)
             i = 1
             for code in codes:
+                value = x[i] if pd.notna(x[i]) else x[1]
                 str = "@override\nString get {} => \"{}\";\n".format(
-                    x.Title, x[i])
+                    x.Code, value)
                 c = []
                 c.append(code)
                 add_to_language_code(c, str)
@@ -59,7 +60,7 @@ file = "strings.xlsx"
 df = pd.read_excel(file)
 codes = []
 for x in df:
-    if (x != "Title"):
+    if (x != "Code"):
         codes.append(x)
 
 init_files(codes)
